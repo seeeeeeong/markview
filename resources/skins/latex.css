@@ -1,0 +1,110 @@
+:root {
+  background: #fbfaf5;
+}
+
+:root[data-theme="dark"] {
+  background: #141416;
+}
+
+.markdown-body {
+  font-family: "Latin Modern Roman", "New Computer Modern", "CMU Serif",
+    Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  color: #1b1b1d;
+  background-color: transparent;
+  text-align: justify;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+:root[data-theme="dark"] .markdown-body {
+  color: #d8d8d2;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  border-bottom: none;
+  padding-bottom: 0;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-align: left;
+}
+
+.markdown-body h1 {
+  text-align: center;
+  font-size: 2em;
+  margin-bottom: 1.2em;
+}
+
+.markdown-body h2 {
+  font-size: 1.45em;
+}
+
+.markdown-body h3 {
+  font-size: 1.18em;
+}
+
+.markdown-body a {
+  color: #0b4085;
+}
+
+:root[data-theme="dark"] .markdown-body a {
+  color: #8ab4f8;
+}
+
+.markdown-body blockquote {
+  border-left: none;
+  color: inherit;
+  font-style: italic;
+  padding: 0 2.5em;
+}
+
+.markdown-body hr {
+  height: 1px;
+  background-color: currentColor;
+  opacity: 0.4;
+  margin: 2.5em auto;
+  width: 60%;
+}
+
+.markdown-body table {
+  border-collapse: collapse;
+  margin: 1.6em auto;
+  border-top: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+}
+
+.markdown-body table th,
+.markdown-body table td {
+  border: none;
+  padding: 0.45em 1em;
+}
+
+.markdown-body table th {
+  border-bottom: 1px solid currentColor;
+}
+
+.markdown-body table tr {
+  background-color: transparent;
+  border-top: none;
+}
+
+.markdown-body table tr:nth-child(2n) {
+  background-color: transparent;
+}
+
+:root[data-theme="light"] .markdown-body pre {
+  background-color: #f3f1e9;
+  border: 1px solid #dcd8c8;
+}
+
+.markdown-body :not(pre) > code {
+  background-color: rgba(120, 110, 80, 0.12);
+}
+
+:root[data-theme="dark"] .markdown-body :not(pre) > code {
+  background-color: rgba(160, 160, 180, 0.18);
+}

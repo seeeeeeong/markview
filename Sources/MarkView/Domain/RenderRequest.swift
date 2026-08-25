@@ -22,6 +22,35 @@ struct RenderRequest: Encodable {
     let fontFamily: String
     let fontSize: Int
     let maxContentWidth: Int?
+    let accentHeadings: Bool
+    let accentBold: Bool
+    let accentInlineCode: Bool
+    let accentHeadingsColor: String
+    let accentBoldColor: String
+    let accentInlineCodeColor: String
+
+    static func current(source: String, fileURL: URL) -> RenderRequest {
+        let headings = AppearanceStore.accent(for: .headings)
+        let bold = AppearanceStore.accent(for: .bold)
+        let inlineCode = AppearanceStore.accent(for: .inlineCode)
+        let width = AppearanceStore.contentWidth
+        return RenderRequest(
+            source: source,
+            baseUrl: fileURL.deletingLastPathComponent().absoluteString,
+            documentType: DocumentKind(fileExtension: fileURL.pathExtension),
+            theme: AppearanceStore.theme.wireValue,
+            profile: AppearanceStore.profile.rawValue,
+            fontFamily: "",
+            fontSize: AppearanceStore.fontSize,
+            maxContentWidth: width == AppearanceStore.fullWidth ? nil : width,
+            accentHeadings: headings != nil,
+            accentBold: bold != nil,
+            accentInlineCode: inlineCode != nil,
+            accentHeadingsColor: (headings ?? .orange).rawValue,
+            accentBoldColor: (bold ?? .gold).rawValue,
+            accentInlineCodeColor: (inlineCode ?? .green).rawValue
+        )
+    }
 
     func encodedJSON() -> String? {
         guard let data = try? JSONEncoder().encode(self) else { return nil }

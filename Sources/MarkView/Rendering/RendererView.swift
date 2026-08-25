@@ -51,11 +51,19 @@ final class RendererView: NSView {
 
     private func dispatch(_ request: RenderRequest) {
         guard let json = request.encodedJSON() else { return }
+        let skinCSS = RendererAssets.skinCSS(for: AppearanceStore.skin) ?? ""
         let script = """
         (function () {
           let base = document.querySelector("base");
           if (!base) { base = document.createElement("base"); document.head.prepend(base); }
           base.href = \(Bridge.quote(request.baseUrl));
+          let skin = document.getElementById("markview-skin");
+          if (!skin) {
+            skin = document.createElement("style");
+            skin.id = "markview-skin";
+            document.head.append(skin);
+          }
+          skin.textContent = \(Bridge.quote(skinCSS));
           window.mdLens.render(\(json));
         })();
         """

@@ -45,18 +45,7 @@ final class ViewerWindowController: NSWindowController {
             presentAlert("Cannot read \(fileURL.path): \(error.localizedDescription)")
             return
         }
-        rendererView.render(
-            RenderRequest(
-                source: source,
-                baseUrl: fileURL.deletingLastPathComponent().absoluteString,
-                documentType: DocumentKind(fileExtension: fileURL.pathExtension),
-                theme: AppearanceStore.theme.wireValue,
-                profile: AppearanceStore.profile.rawValue,
-                fontFamily: "",
-                fontSize: AppearanceStore.fontSize,
-                maxContentWidth: AppearanceStore.defaultContentWidth
-            )
-        )
+        rendererView.render(RenderRequest.current(source: source, fileURL: fileURL))
     }
 
     private func startWatching() {

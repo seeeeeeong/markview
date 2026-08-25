@@ -1,10 +1,21 @@
 import AppKit
 
+enum MenuID {
+    static let theme = NSUserInterfaceItemIdentifier("theme")
+    static let skin = NSUserInterfaceItemIdentifier("skin")
+    static let profile = NSUserInterfaceItemIdentifier("profile")
+    static let width = NSUserInterfaceItemIdentifier("width")
+
+    static func accent(_ target: AccentTarget) -> NSUserInterfaceItemIdentifier {
+        NSUserInterfaceItemIdentifier("accent.\(target.rawValue)")
+    }
+}
+
 enum MainMenuBuilder {
     static func build(for delegate: AppDelegate) -> NSMenu {
         let mainMenu = NSMenu()
         mainMenu.addItem(appMenuItem())
-        mainMenu.addItem(fileMenuItem(delegate))
+        mainMenu.addItem(fileMenuItem())
         mainMenu.addItem(editMenuItem())
         mainMenu.addItem(viewMenuItem(delegate))
         mainMenu.addItem(windowMenuItem())
@@ -26,7 +37,7 @@ enum MainMenuBuilder {
         return item
     }
 
-    private static func fileMenuItem(_ delegate: AppDelegate) -> NSMenuItem {
+    private static func fileMenuItem() -> NSMenuItem {
         let item = NSMenuItem()
         let menu = NSMenu(title: "File")
         menu.addItem(withTitle: "Open…", action: #selector(AppDelegate.showOpenPanel(_:)), keyEquivalent: "o")
@@ -48,22 +59,26 @@ enum MainMenuBuilder {
         let item = NSMenuItem()
         let menu = NSMenu(title: "View")
 
-        let themeItem = NSMenuItem(title: "Theme", action: nil, keyEquivalent: "")
-        let themeMenu = NSMenu(title: "Theme")
-        themeMenu.addItem(withTitle: "System", action: #selector(AppDelegate.setThemeSystem(_:)), keyEquivalent: "")
-        themeMenu.addItem(withTitle: "Light", action: #selector(AppDelegate.setThemeLight(_:)), keyEquivalent: "")
-        themeMenu.addItem(withTitle: "Dark", action: #selector(AppDelegate.setThemeDark(_:)), keyEquivalent: "")
-        themeMenu.delegate = delegate
-        themeItem.submenu = themeMenu
-        menu.addItem(themeItem)
-
-        let profileItem = NSMenuItem(title: "Profile", action: nil, keyEquivalent: "")
-        let profileMenu = NSMenu(title: "Profile")
-        profileMenu.addItem(withTitle: "Compact", action: #selector(AppDelegate.setProfileCompact(_:)), keyEquivalent: "")
-        profileMenu.addItem(withTitle: "Spacious", action: #selector(AppDelegate.setProfileSpacious(_:)), keyEquivalent: "")
-        profileMenu.delegate = delegate
-        profileItem.submenu = profileMenu
-        menu.addItem(profileItem)
+        menu.addItem(optionSubmenu(
+            title: "Theme",
+            identifier: MenuID.theme,
+            options: Theme.allCases.map { ($0.rawValue.capitalized, $0.rawValue) },
+            delegate: delegate
+        ))
+        menu.addItem(optionSubmenu(
+            title: "Style",
+            identifier: MenuID.skin,
+            options: Skin.allCases.map { ($0.displayName, $0.rawValue) },
+            delegate: delegate
+        ))
+        menu.addItem(optionSubmenu(
+            title: "Profile",
+            identifier: MenuID.profile,
+            options: Profile.allCases.map { ($0.rawValue.capitalized, $0.rawValue) },
+            delegate: delegate
+        ))
+        menu.addItem(widthSubmenu(delegate))
+        menu.addItem(accentSubmenu(delegate))
 
         menu.addItem(.separator())
         menu.addItem(
@@ -86,6 +101,57 @@ enum MainMenuBuilder {
             action: #selector(ViewerWindowController.resetFontSize(_:)),
             keyEquivalent: "0"
         )
+        item.submenu = menu
+        return item
+    }
+
+    private static func widthSubmenu(_ delegate: AppDelegate) -> NSMenuItem {
+        var options = AppearanceStore.contentWidthChoices.map { ("\($0) px", $0) }
+        options.append(("Full Width", AppearanceStore.fullWidth))
+        return optionSubmenu(
+            title: "Content Width",
+            identifier: MenuID.width,
+            options: options,
+            delegate: delegate
+        )
+    }
+
+    private static func accentSubmenu(_ delegate: AppDelegate) -> NSMenuItem {
+        let item = NSMenuItem(title: "Accent Colors", action: nil, keyEquivalent: "")
+        let menu = NSMenu(title: "Accent Colors")
+        for target in AccentTarget.allCases {
+            var options = [("Off", "off")]
+            options += AccentColor.allCases.map { ($0.displayName, $0.rawValue) }
+            menu.addItem(optionSubmenu(
+                title: target.displayName,
+                identifier: MenuID.accent(target),
+                options: options,
+                delegate: delegate
+            ))
+        }
+        item.submenu = menu
+        return item
+    }
+
+    private static func optionSubmenu<Value>(
+        title: String,
+        identifier: NSUserInterfaceItemIdentifier,
+        options: [(label: String, value: Value)],
+        delegate: AppDelegate
+    ) -> NSMenuItem {
+        let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+        let menu = NSMenu(title: title)
+        menu.identifier = identifier
+        menu.delegate = delegate
+        for option in options {
+            let optionItem = NSMenuItem(
+                title: option.label,
+                action: #selector(AppDelegate.selectAppearanceOption(_:)),
+                keyEquivalent: ""
+            )
+            optionItem.representedObject = option.value
+            menu.addItem(optionItem)
+        }
         item.submenu = menu
         return item
     }

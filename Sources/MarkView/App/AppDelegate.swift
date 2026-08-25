@@ -52,42 +52,57 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    @objc func setThemeSystem(_ sender: Any?) { applyTheme(.system) }
-    @objc func setThemeLight(_ sender: Any?) { applyTheme(.light) }
-    @objc func setThemeDark(_ sender: Any?) { applyTheme(.dark) }
-    @objc func setProfileCompact(_ sender: Any?) { applyProfile(.compact) }
-    @objc func setProfileSpacious(_ sender: Any?) { applyProfile(.spacious) }
-
-    private func applyTheme(_ theme: Theme) {
-        AppearanceStore.theme = theme
-        rerenderAll()
-    }
-
-    private func applyProfile(_ profile: Profile) {
-        AppearanceStore.profile = profile
-        rerenderAll()
-    }
-
-    private func rerenderAll() {
+    @objc func selectAppearanceOption(_ sender: NSMenuItem) {
+        guard let identifier = sender.menu?.identifier else { return }
+        switch identifier {
+        case MenuID.theme:
+            AppearanceStore.theme = Theme(rawValue: sender.representedObject as? String ?? "") ?? .system
+        case MenuID.skin:
+            AppearanceStore.skin = Skin(rawValue: sender.representedObject as? String ?? "") ?? .github
+        case MenuID.profile:
+            AppearanceStore.profile = Profile(rawValue: sender.representedObject as? String ?? "") ?? .compact
+        case MenuID.width:
+            AppearanceStore.contentWidth = sender.representedObject as? Int ?? AppearanceStore.defaultContentWidth
+        default:
+            guard let target = accentTarget(for: identifier) else { return }
+            AppearanceStore.setAccent(
+                AccentColor(rawValue: sender.representedObject as? String ?? ""),
+                for: target
+            )
+        }
         controllers.forEach { $0.render() }
+    }
+
+    private func accentTarget(for identifier: NSUserInterfaceItemIdentifier) -> AccentTarget? {
+        AccentTarget.allCases.first { MenuID.accent($0) == identifier }
+    }
+
+    private func currentValue(for identifier: NSUserInterfaceItemIdentifier) -> Any? {
+        switch identifier {
+        case MenuID.theme: return AppearanceStore.theme.rawValue
+        case MenuID.skin: return AppearanceStore.skin.rawValue
+        case MenuID.profile: return AppearanceStore.profile.rawValue
+        case MenuID.width: return AppearanceStore.contentWidth
+        default:
+            guard let target = accentTarget(for: identifier) else { return nil }
+            return AppearanceStore.accent(for: target)?.rawValue ?? "off"
+        }
     }
 }
 
 extension AppDelegate: NSMenuDelegate {
     func menuNeedsUpdate(_ menu: NSMenu) {
+        guard let identifier = menu.identifier, let current = currentValue(for: identifier) else { return }
         for item in menu.items {
-            switch item.action {
-            case #selector(setThemeSystem(_:)): item.state = state(AppearanceStore.theme == .system)
-            case #selector(setThemeLight(_:)): item.state = state(AppearanceStore.theme == .light)
-            case #selector(setThemeDark(_:)): item.state = state(AppearanceStore.theme == .dark)
-            case #selector(setProfileCompact(_:)): item.state = state(AppearanceStore.profile == .compact)
-            case #selector(setProfileSpacious(_:)): item.state = state(AppearanceStore.profile == .spacious)
-            default: break
+            let matches: Bool
+            if let value = item.representedObject as? String, let selected = current as? String {
+                matches = value == selected
+            } else if let value = item.representedObject as? Int, let selected = current as? Int {
+                matches = value == selected
+            } else {
+                matches = false
             }
+            item.state = matches ? .on : .off
         }
-    }
-
-    private func state(_ isOn: Bool) -> NSControl.StateValue {
-        isOn ? .on : .off
     }
 }
