@@ -18,6 +18,7 @@ final class RendererView: NSView {
         let contentController = WKUserContentController()
         let configuration = WKWebViewConfiguration()
         configuration.userContentController = contentController
+        configuration.setURLSchemeHandler(RendererSchemeHandler(), forURLScheme: RendererSchemeHandler.scheme)
         webView = WKWebView(frame: .zero, configuration: configuration)
         super.init(frame: frameRect)
 
@@ -42,11 +43,11 @@ final class RendererView: NSView {
     }
 
     private func loadRendererPage() {
-        guard let indexURL = RendererAssets.indexURL else {
+        guard RendererAssets.indexURL != nil else {
             delegate?.rendererViewDidFailToLoadAssets(self)
             return
         }
-        webView.loadFileURL(indexURL, allowingReadAccessTo: URL(fileURLWithPath: "/"))
+        webView.load(URLRequest(url: RendererSchemeHandler.indexURL))
     }
 
     private func dispatch(_ request: RenderRequest) {
@@ -56,7 +57,7 @@ final class RendererView: NSView {
         (function () {
           let base = document.querySelector("base");
           if (!base) { base = document.createElement("base"); document.head.prepend(base); }
-          base.href = \(Bridge.quote(request.baseUrl));
+          base.href = \(Bridge.quote(documentBase(from: request.baseUrl)));
           let skin = document.getElementById("markview-skin");
           if (!skin) {
             skin = document.createElement("style");
@@ -70,6 +71,11 @@ final class RendererView: NSView {
         webView.evaluateJavaScript(script) { _, error in
             if let error { DebugLog.write("render dispatch failed: \(error)") }
         }
+    }
+
+    private func documentBase(from baseUrl: String) -> String {
+        guard let url = URL(string: baseUrl), url.isFileURL else { return baseUrl }
+        return RendererSchemeHandler.documentBase(for: url)
     }
 
     private func connectBridge() {
