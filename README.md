@@ -7,7 +7,7 @@ GitHub alerts, footnotes, and task lists — in a lightweight AppKit app.
 ## Install
 
 Download the latest `MarkView-x.y.z.dmg` from
-[Releases](https://github.com/sinseonglee/markview/releases), open it, and drag
+[Releases](https://github.com/seeeeeeong/markview/releases), open it, and drag
 MarkView to Applications.
 
 The app is not notarized yet, so on first launch macOS may block it. Either
