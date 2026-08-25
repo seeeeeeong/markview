@@ -33,7 +33,7 @@ App Store submission additionally requires:
 
 1. **Apple Developer Program membership** (paid) with an
    **Apple Distribution** certificate and a **Mac App Store provisioning profile**
-   for `com.lee.markview` (create both in Xcode or developer.apple.com).
+   for `com.seeeeeeong.markview` (create both in Xcode or developer.apple.com).
 2. **App Sandbox** — mandatory. `MarkView.entitlements` is prepared
    (sandbox + user-selected read-only files + network client for remote images).
    Before submitting, one code change is required: in
@@ -52,7 +52,7 @@ productbuild --component MarkView.app /Applications \
 ```
 
 4. Create the app record in **App Store Connect** (name, bundle id
-   `com.lee.markview`, category Productivity), upload with
+   `com.seeeeeeong.markview`, category Productivity), upload with
    `xcrun altool --upload-package` or Transporter.app, fill in screenshots
    (1280x800 or 2560x1600), description, privacy declaration
    (no data collected), and submit for review.
