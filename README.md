@@ -2,7 +2,8 @@
 
 A native macOS markdown viewer with GitHub-style rendering.
 Syntax highlighting (Shiki / VS Code grammars), Mermaid diagrams, KaTeX math,
-GitHub alerts, footnotes, and task lists — in a lightweight AppKit app.
+GitHub alerts, footnotes, and task lists — in a lightweight AppKit app that
+opens instantly with a prewarmed rendering engine.
 
 ## Install
 
@@ -10,7 +11,7 @@ Download the latest `MarkView-x.y.z.dmg` from
 [Releases](https://github.com/seeeeeeong/markview/releases), open it, and drag
 MarkView to Applications.
 
-The app is not notarized yet, so on first launch macOS may block it. Either
+The DMG is not notarized, so on first launch macOS may block it. Either
 right-click the app and choose **Open**, or run:
 
 ```bash
@@ -38,7 +39,6 @@ Requires Xcode command line tools (Swift 5.9+).
 | Item | Values |
 |---|---|
 | Theme | System / Light / Dark |
-| Style | GitHub / LaTeX / Tufte |
 | Profile | Compact / Spacious |
 | Font | System default + installed recommended families |
 | Content Width | 768–1536 px / Full Width |
@@ -51,12 +51,11 @@ Requires Xcode command line tools (Swift 5.9+).
 Sources/MarkView/
   App/           # bootstrap, AppDelegate, menu construction
   Domain/        # appearance settings, render request model
-  Rendering/     # WKWebView renderer host, bundled asset lookup
+  Rendering/     # WKWebView renderer host, prewarm pool, bundled asset lookup
   Presentation/  # document viewer window
   Support/       # file watching, debug logging
 resources/
   renderer/      # prebuilt rendering engine
-  skins/         # LaTeX and Tufte style CSS
 ```
 
 Third-party notices ship in the app's About panel (Credits).
