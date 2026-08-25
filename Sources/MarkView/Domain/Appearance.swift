@@ -79,6 +79,11 @@ enum AppearanceStore {
         set { defaults.set(newValue.rawValue, forKey: "skin") }
     }
 
+    static var fontFamily: String {
+        get { defaults.string(forKey: "fontFamily") ?? "" }
+        set { defaults.set(newValue, forKey: "fontFamily") }
+    }
+
     static var fontSize: Int {
         get {
             let stored = defaults.object(forKey: "fontSize") as? Int ?? defaultFontSize

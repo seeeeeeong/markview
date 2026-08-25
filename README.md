@@ -23,6 +23,7 @@ GitHub 스타일로 렌더링하는 네이티브 macOS 마크다운 뷰어.
 | Theme | System / Light / Dark |
 | Style | GitHub / LaTeX / Tufte |
 | Profile | Compact / Spacious |
+| Font | Default(시스템) + 설치된 추천 폰트 |
 | Content Width | 768–1536px / Full Width |
 | Accent Colors | Headings·Bold·Inline Code 각각 Off + 8색 |
 | 글자 크기 | Cmd +/-/0 (12–24px) |

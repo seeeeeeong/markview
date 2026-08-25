@@ -63,6 +63,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             AppearanceStore.profile = Profile(rawValue: sender.representedObject as? String ?? "") ?? .compact
         case MenuID.width:
             AppearanceStore.contentWidth = sender.representedObject as? Int ?? AppearanceStore.defaultContentWidth
+        case MenuID.font:
+            AppearanceStore.fontFamily = sender.representedObject as? String ?? ""
         default:
             guard let target = accentTarget(for: identifier) else { return }
             AppearanceStore.setAccent(
@@ -83,6 +85,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case MenuID.skin: return AppearanceStore.skin.rawValue
         case MenuID.profile: return AppearanceStore.profile.rawValue
         case MenuID.width: return AppearanceStore.contentWidth
+        case MenuID.font: return AppearanceStore.fontFamily
         default:
             guard let target = accentTarget(for: identifier) else { return nil }
             return AppearanceStore.accent(for: target)?.rawValue ?? "off"

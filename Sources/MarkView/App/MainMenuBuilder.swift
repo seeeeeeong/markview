@@ -5,6 +5,7 @@ enum MenuID {
     static let skin = NSUserInterfaceItemIdentifier("skin")
     static let profile = NSUserInterfaceItemIdentifier("profile")
     static let width = NSUserInterfaceItemIdentifier("width")
+    static let font = NSUserInterfaceItemIdentifier("font")
 
     static func accent(_ target: AccentTarget) -> NSUserInterfaceItemIdentifier {
         NSUserInterfaceItemIdentifier("accent.\(target.rawValue)")
@@ -77,6 +78,7 @@ enum MainMenuBuilder {
             options: Profile.allCases.map { ($0.rawValue.capitalized, $0.rawValue) },
             delegate: delegate
         ))
+        menu.addItem(fontSubmenu(delegate))
         menu.addItem(widthSubmenu(delegate))
         menu.addItem(accentSubmenu(delegate))
 
@@ -103,6 +105,26 @@ enum MainMenuBuilder {
         )
         item.submenu = menu
         return item
+    }
+
+    private static let recommendedFonts = [
+        "Pretendard", "Apple SD Gothic Neo", "Inter", "Atkinson Hyperlegible",
+        "Charter", "Georgia", "Palatino", "Noto Serif KR", "Noto Serif",
+        "JetBrains Mono", "D2Coding",
+    ]
+
+    private static func fontSubmenu(_ delegate: AppDelegate) -> NSMenuItem {
+        let installed = Set(NSFontManager.shared.availableFontFamilies)
+        var options = [("Default (System)", "")]
+        options += recommendedFonts
+            .filter { installed.contains($0) }
+            .map { ($0, $0) }
+        return optionSubmenu(
+            title: "Font",
+            identifier: MenuID.font,
+            options: options,
+            delegate: delegate
+        )
     }
 
     private static func widthSubmenu(_ delegate: AppDelegate) -> NSMenuItem {

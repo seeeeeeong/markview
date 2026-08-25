@@ -40,7 +40,7 @@ struct RenderRequest: Encodable {
             documentType: DocumentKind(fileExtension: fileURL.pathExtension),
             theme: AppearanceStore.theme.wireValue,
             profile: AppearanceStore.profile.rawValue,
-            fontFamily: "",
+            fontFamily: AppearanceStore.fontFamily,
             fontSize: AppearanceStore.fontSize,
             maxContentWidth: width == AppearanceStore.fullWidth ? nil : width,
             accentHeadings: headings != nil,
