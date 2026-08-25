@@ -2,3 +2,6 @@
 MarkView.app/
 .DS_Store
 .idea/
+embedded.provisionprofile
+*.pkg
+*.dmg
