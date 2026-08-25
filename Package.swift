@@ -2,12 +2,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "MdLens",
+    name: "MarkView",
     platforms: [.macOS(.v13)],
     targets: [
         .executableTarget(
-            name: "MdLens",
-            path: "Sources/MdLens"
+            name: "MarkView",
+            path: "Sources/MarkView"
         )
     ]
 )
