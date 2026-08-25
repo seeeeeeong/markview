@@ -7,6 +7,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.mainMenu = MainMenuBuilder.build(for: self)
         NSApp.activate(ignoringOtherApps: true)
+        RendererViewPool.shared.warmUp()
     }
 
     func applicationShouldOpenUntitledFile(_ sender: NSApplication) -> Bool {
@@ -57,8 +58,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         switch identifier {
         case MenuID.theme:
             AppearanceStore.theme = Theme(rawValue: sender.representedObject as? String ?? "") ?? .system
-        case MenuID.skin:
-            AppearanceStore.skin = Skin(rawValue: sender.representedObject as? String ?? "") ?? .github
         case MenuID.profile:
             AppearanceStore.profile = Profile(rawValue: sender.representedObject as? String ?? "") ?? .compact
         case MenuID.width:
@@ -82,7 +81,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func currentValue(for identifier: NSUserInterfaceItemIdentifier) -> Any? {
         switch identifier {
         case MenuID.theme: return AppearanceStore.theme.rawValue
-        case MenuID.skin: return AppearanceStore.skin.rawValue
         case MenuID.profile: return AppearanceStore.profile.rawValue
         case MenuID.width: return AppearanceStore.contentWidth
         case MenuID.font: return AppearanceStore.fontFamily

@@ -21,16 +21,6 @@ enum RendererAssets {
         )
     }
 
-    static func skinCSS(for skin: Skin) -> String? {
-        guard skin != .github, let directory else { return nil }
-        return try? String(
-            contentsOf: directory
-                .deletingLastPathComponent()
-                .appendingPathComponent("skins/\(skin.rawValue).css"),
-            encoding: .utf8
-        )
-    }
-
     private static func candidateDirectories() -> [URL] {
         var candidates: [URL] = []
         if let bundled = Bundle.main.resourceURL {

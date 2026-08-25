@@ -28,6 +28,7 @@ final class RendererView: NSView {
         webView.autoresizingMask = [.width, .height]
         webView.frame = bounds
         addSubview(webView)
+        DebugLog.write("renderer view created")
         loadRendererPage()
     }
 
@@ -52,25 +53,18 @@ final class RendererView: NSView {
 
     private func dispatch(_ request: RenderRequest) {
         guard let json = request.encodedJSON() else { return }
-        let skinCSS = RendererAssets.skinCSS(for: AppearanceStore.skin) ?? ""
         let script = """
         (function () {
           let base = document.querySelector("base");
           if (!base) { base = document.createElement("base"); document.head.prepend(base); }
           base.href = \(Bridge.quote(documentBase(from: request.baseUrl)));
-          let skin = document.getElementById("markview-skin");
-          if (!skin) {
-            skin = document.createElement("style");
-            skin.id = "markview-skin";
-            document.head.append(skin);
-          }
-          skin.textContent = \(Bridge.quote(skinCSS));
           window.mdLens.render(\(json));
         })();
         """
         webView.evaluateJavaScript(script) { _, error in
             if let error { DebugLog.write("render dispatch failed: \(error)") }
         }
+        DebugLog.write("render dispatched")
     }
 
     private func documentBase(from baseUrl: String) -> String {
@@ -147,7 +141,7 @@ private enum Bridge {
 
     static let connectScript = """
     (function connect() {
-      if (!window.mdLens) { setTimeout(connect, 50); return; }
+      if (!window.mdLens) { setTimeout(connect, 16); return; }
       const post = (m) => window.webkit.messageHandlers.host.postMessage(m);
       window.mdLens.connect({
         error: (message) => post({ type: "error", message: String(message) }),

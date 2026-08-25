@@ -10,14 +10,13 @@ swift build -c release
 
 APP=MarkView.app
 rm -rf "$APP"
-mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources/renderer" "$APP/Contents/Resources/skins"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources/renderer"
 cp Info.plist "$APP/Contents/"
 cp Credits.rtf "$APP/Contents/Resources/"
 cp AppIcon.icns "$APP/Contents/Resources/"
 cp embedded.provisionprofile "$APP/Contents/"
 cp .build/release/MarkView "$APP/Contents/MacOS/MarkView"
 cp resources/renderer/* "$APP/Contents/Resources/renderer/"
-cp resources/skins/* "$APP/Contents/Resources/skins/"
 
 codesign --force --entitlements MarkView.entitlements --sign "$APP_CERT" "$APP"
 codesign --verify --deep --strict "$APP"

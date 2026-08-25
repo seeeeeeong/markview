@@ -9,10 +9,10 @@ final class ViewerWindowController: NSWindowController {
 
     init(fileURL: URL) {
         self.fileURL = fileURL
-        rendererView = RendererView(frame: NSRect(x: 0, y: 0, width: 900, height: 760))
+        rendererView = RendererViewPool.shared.take()
 
         let window = NSWindow(
-            contentRect: rendererView.frame,
+            contentRect: NSRect(x: 0, y: 0, width: 900, height: 760),
             styleMask: [.titled, .closable, .miniaturizable, .resizable],
             backing: .buffered,
             defer: false

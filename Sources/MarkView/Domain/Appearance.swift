@@ -21,20 +21,6 @@ enum Profile: String, CaseIterable {
     case spacious
 }
 
-enum Skin: String, CaseIterable {
-    case github
-    case latex
-    case tufte
-
-    var displayName: String {
-        switch self {
-        case .github: return "GitHub"
-        case .latex: return "LaTeX"
-        case .tufte: return "Tufte"
-        }
-    }
-}
-
 enum AccentColor: String, CaseIterable {
     case orange, gold, green, teal, blue, purple, pink, red
 
@@ -72,11 +58,6 @@ enum AppearanceStore {
     static var profile: Profile {
         get { Profile(rawValue: defaults.string(forKey: "profile") ?? "") ?? .compact }
         set { defaults.set(newValue.rawValue, forKey: "profile") }
-    }
-
-    static var skin: Skin {
-        get { Skin(rawValue: defaults.string(forKey: "skin") ?? "") ?? .github }
-        set { defaults.set(newValue.rawValue, forKey: "skin") }
     }
 
     static var fontFamily: String {

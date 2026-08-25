@@ -2,7 +2,6 @@ import AppKit
 
 enum MenuID {
     static let theme = NSUserInterfaceItemIdentifier("theme")
-    static let skin = NSUserInterfaceItemIdentifier("skin")
     static let profile = NSUserInterfaceItemIdentifier("profile")
     static let width = NSUserInterfaceItemIdentifier("width")
     static let font = NSUserInterfaceItemIdentifier("font")
@@ -64,12 +63,6 @@ enum MainMenuBuilder {
             title: "Theme",
             identifier: MenuID.theme,
             options: Theme.allCases.map { ($0.rawValue.capitalized, $0.rawValue) },
-            delegate: delegate
-        ))
-        menu.addItem(optionSubmenu(
-            title: "Style",
-            identifier: MenuID.skin,
-            options: Skin.allCases.map { ($0.displayName, $0.rawValue) },
             delegate: delegate
         ))
         menu.addItem(optionSubmenu(
