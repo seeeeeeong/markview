@@ -28,24 +28,41 @@ final class ViewerWindowController: NSWindowController {
         rendererView.frame = window.contentView!.bounds
         window.contentView!.addSubview(rendererView)
 
-        render()
         startWatching()
         observeSystemAppearance()
         NSDocumentController.shared.noteNewRecentDocumentURL(fileURL)
+    }
+
+    override func showWindow(_ sender: Any?) {
+        super.showWindow(sender)
+        render()
     }
 
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError() }
 
     func render() {
-        let source: String
+        let data: Data
         do {
-            source = try String(contentsOf: fileURL, encoding: .utf8)
+            data = try Data(contentsOf: fileURL)
         } catch {
             presentAlert("Cannot read \(fileURL.path): \(error.localizedDescription)")
             return
         }
+        let source = Self.decode(data)
         rendererView.render(RenderRequest.current(source: source, fileURL: fileURL))
+    }
+
+    /// UTF-8 first, then BOM-detected UTF-16, then Windows-1252 (Excel CSV exports),
+    /// and finally lossy UTF-8 so a viewer never fails on encoding.
+    static func decode(_ data: Data) -> String {
+        if let text = String(data: data, encoding: .utf8) { return text }
+        if data.starts(with: [0xFF, 0xFE]) || data.starts(with: [0xFE, 0xFF]),
+           let text = String(data: data, encoding: .utf16) {
+            return text
+        }
+        if let text = String(data: data, encoding: .windowsCP1252) { return text }
+        return String(decoding: data, as: UTF8.self)
     }
 
     private func startWatching() {
@@ -68,7 +85,11 @@ final class ViewerWindowController: NSWindowController {
         let alert = NSAlert()
         alert.messageText = "MarkView"
         alert.informativeText = message
-        alert.runModal()
+        if let window, window.isVisible {
+            alert.beginSheetModal(for: window)
+        } else {
+            DispatchQueue.main.async { alert.runModal() }
+        }
     }
 
     @objc func reloadDocument(_ sender: Any?) {
@@ -93,8 +114,7 @@ final class ViewerWindowController: NSWindowController {
 
 extension ViewerWindowController: RendererViewDelegate {
     func rendererView(_ view: RendererView, didRequestOpen url: URL) {
-        let viewableExtensions = ["md", "markdown", "mdown", "mmd", "mermaid"]
-        if url.isFileURL, viewableExtensions.contains(url.pathExtension.lowercased()) {
+        if url.isFileURL, AppDelegate.markdownExtensions.contains(url.pathExtension.lowercased()) {
             (NSApp.delegate as? AppDelegate)?.openDocument(at: url)
         } else {
             NSWorkspace.shared.open(url)

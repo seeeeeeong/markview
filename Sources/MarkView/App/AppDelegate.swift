@@ -41,12 +41,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         controller.showWindow(nil)
     }
 
+    static let markdownExtensions = ["md", "markdown", "mdown", "mmd", "mermaid"]
+
+    static let markdownContentTypes: [UTType] = markdownExtensions.compactMap {
+        UTType(filenameExtension: $0)
+    }
+
     @objc func showOpenPanel(_ sender: Any?) {
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = true
-        if let markdown = UTType(filenameExtension: "md") {
-            panel.allowedContentTypes = [markdown, .plainText]
-        }
+        panel.allowedContentTypes = Self.markdownContentTypes
         panel.begin { [weak self] response in
             guard response == .OK else { return }
             panel.urls.forEach { self?.openDocument(at: $0) }
