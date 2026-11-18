@@ -30,7 +30,6 @@ final class ViewerWindowController: NSWindowController {
 
         startWatching()
         observeSystemAppearance()
-        NSDocumentController.shared.noteNewRecentDocumentURL(fileURL)
     }
 
     override func showWindow(_ sender: Any?) {
